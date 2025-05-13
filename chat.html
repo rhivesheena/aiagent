@@ -1,1 +1,74 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat with Hunni - RHIVE</title>
+
+  <style>
+    :root {
+      --chat--color-primary: #ec058e;
+      --chat--color-dark: #ec058e;
+      --chat--header--background: var(--chat--color-dark);
+      --chat--header--color: white;
+      --chat--toggle--background: transparent;
+    }
+
+    .n8n-chat-toggle {
+      display: none !important;
+    }
+
+    #custom-launcher {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 220px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+  </style>
+
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="n8n-chat"></div>
+
+  <img
+    id="custom-launcher"
+    src="https://i.imgur.com/FMxJmoW.png"
+    alt="Chat with Hunni"
+  />
+
+  <script src="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.iife.js"></script>
+  <script>
+    function bindLauncherWhenReady() {
+      const launcher = document.getElementById("custom-launcher");
+      const toggle = document.querySelector(".n8n-chat-toggle");
+
+      if (launcher && toggle) {
+        launcher.addEventListener("click", () => toggle.click());
+      } else {
+        setTimeout(bindLauncherWhenReady, 300);
+      }
+    }
+
+    window.onload = () => {
+      window.N8NChat.createChat({
+        webhookUrl: "https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat",
+        target: "#n8n-chat",
+        mode: "window",
+        initialMessages: [
+          "Hi there! 👋",
+          "I’m Hunni of RHIVE, the official AI Agent for RHIVE Construction. How can I assist you with your roofing needs today?"
+        ],
+        showWelcomeScreen: false
+      });
+
+      bindLauncherWhenReady();
+    };
+  </script>
+</body>
+</html>
+
