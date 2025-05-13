@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat with Hunni</title>
   <style>
@@ -137,7 +137,11 @@
         const res = await fetch("https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMessage })
+          body: JSON.stringify({
+            message: userMessage,
+            sessionId: "custom-" + Date.now(),
+            user: { name: "Guest" }
+          })
         });
         const data = await res.json();
         appendMessage(data.reply || data.message || "Sorry, no response.", "bot");
@@ -153,5 +157,3 @@
   </script>
 </body>
 </html>
-
-
