@@ -2,21 +2,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat with Hunni - RHIVE</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Hunni</title>
   <style>
-    :root {
-      --chat--color-primary: #ec058e;
-      --chat--color-dark: #ec058e;
-      --chat--header--background: var(--chat--color-dark);
-      --chat--header--color: white;
-      --chat--toggle--background: transparent;
-    }
-
-    .n8n-chat-toggle {
-      display: none !important;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
 
     #custom-launcher {
@@ -27,48 +19,139 @@
       cursor: pointer;
       z-index: 9999;
     }
-  </style>
 
-  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    #chat-box {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background-color: #ec028b;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 9998;
+      overflow: hidden;
+    }
+
+    #chat-header {
+      background: #000000;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message.bot {
+      background-color: #000000;
+      color: white;
+      align-self: flex-start;
+      padding: 10px;
+      border-radius: 15px;
+      max-width: 80%;
+    }
+
+    .message.user {
+      background-color: white;
+      color: black;
+      align-self: flex-end;
+      padding: 10px;
+      border-radius: 15px;
+      max-width: 80%;
+    }
+
+    #chat-input-area {
+      display: flex;
+      padding: 10px;
+      background: white;
+    }
+
+    #chat-input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    #send-button {
+      background-color: #ec028b;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-  <div id="n8n-chat"></div>
+  <img id="custom-launcher" src="https://i.imgur.com/FMxJmoW.png" alt="Chat with Hunni" />
 
-  <img
-    id="custom-launcher"
-    src="https://i.imgur.com/FMxJmoW.png"
-    alt="Chat with Hunni"
-  />
+  <div id="chat-box">
+    <div id="chat-header">● Chat with Hunni</div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input id="chat-input" placeholder="Type here..." />
+      <button id="send-button">Send</button>
+    </div>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.iife.js"></script>
   <script>
-    function bindLauncherWhenReady() {
-      const launcher = document.getElementById("custom-launcher");
-      const toggle = document.querySelector(".n8n-chat-toggle");
+    const launcher = document.getElementById("custom-launcher");
+    const chatBox = document.getElementById("chat-box");
+    const chatInput = document.getElementById("chat-input");
+    const chatMessages = document.getElementById("chat-messages");
+    const sendButton = document.getElementById("send-button");
 
-      if (launcher && toggle) {
-        launcher.addEventListener("click", () => toggle.click());
-      } else {
-        setTimeout(bindLauncherWhenReady, 300);
+    launcher.onclick = () => {
+      chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
+    };
+
+    function appendMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = "message " + sender;
+      div.textContent = text;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+
+      appendMessage(userMessage, "user");
+      chatInput.value = "";
+
+      try {
+        const res = await fetch("https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage })
+        });
+        const data = await res.json();
+        appendMessage(data.reply || data.message || "Sorry, no response.", "bot");
+      } catch (err) {
+        appendMessage("Error connecting to Hunni.", "bot");
       }
     }
 
-    window.onload = () => {
-      window.N8NChat.createChat({
-        webhookUrl: "https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat",
-        target: "#n8n-chat",
-        mode: "window",
-        initialMessages: [
-          "Hi there! 👋",
-          "I’m Hunni of RHIVE, the official AI Agent for RHIVE Construction. How can I assist you with your roofing needs today?"
-        ],
-        showWelcomeScreen: false
-      });
-
-      bindLauncherWhenReady();
-    };
+    sendButton.onclick = sendMessage;
+    chatInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
   </script>
 </body>
 </html>
+
 
