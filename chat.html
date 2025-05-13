@@ -139,6 +139,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             message: userMessage,
+            chatInput: userMessage,
             sessionId: "custom-" + Date.now(),
             user: { name: "Guest" }
           })
