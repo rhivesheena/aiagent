@@ -1,159 +1,151 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat with Hunni</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RHIVE Chatbot</title>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   <style>
+    :root {
+      --chat--color-primary: #ec058e;
+      --chat--color-dark: #000000;
+      --chat--color-white: #ffffff;
+      --chat--bubble--user: #ffffff;
+      --chat--bubble--assistant: #000000;
+      --chat--font-family: 'Arial', sans-serif;
+      --chat--color-light: #ec058e;
+    }
+
     body {
+      background-color: #ec058e;
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
     }
 
-    #custom-launcher {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 220px;
-      cursor: pointer;
-      z-index: 9999;
-    }
-
-    #chat-box {
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 350px;
-      height: 500px;
-      background-color: #ec028b;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      z-index: 9998;
-      overflow: hidden;
-    }
-
-    #chat-header {
-      background: #000000;
+    /* Custom header bar */
+    .custom-header {
+      background-color: black;
       color: white;
-      padding: 15px;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    #chat-messages {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      color: white;
+      padding: 10px 16px;
+      font-size: 20px;
+      font-weight: 500;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 10px;
     }
 
-    .message.bot {
-      background-color: #000000;
-      color: white;
-      align-self: flex-start;
-      padding: 10px;
-      border-radius: 15px;
-      max-width: 80%;
+    .custom-header .dot {
+      height: 12px;
+      width: 12px;
+      background-color: #00cc44;
+      border-radius: 50%;
     }
 
-    .message.user {
-      background-color: white;
-      color: black;
-      align-self: flex-end;
-      padding: 10px;
-      border-radius: 15px;
-      max-width: 80%;
+    /* Hide default n8n header */
+    .n8n-chat-header__wrapper {
+      display: none !important;
     }
 
-    #chat-input-area {
-      display: flex;
-      padding: 10px;
-      background: white;
+    /* Set widget background */
+    .n8n-chat-widget {
+      background-color: #ec058e !important;
     }
 
-    #chat-input {
-      flex: 1;
-      border: none;
-      padding: 10px;
-      font-size: 14px;
+    /* Message label styles */
+    .n8n-chat-message--assistant .n8n-chat-message__from {
+      color: white !important;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: left;
+      padding-left: 10px;
     }
 
-    #send-button {
-      background-color: #ec028b;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
+    .n8n-chat-message--user .n8n-chat-message__from {
+      color: white !important;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: right;
+      padding-right: 10px;
+    }
+
+    /* Assistant bubble */
+    .n8n-chat-message--assistant .n8n-chat-message__bubble {
+      background-color: black !important;
+      color: white !important;
+      border-radius: 24px;
+      font-size: 18px;
+      padding: 12px 16px;
+    }
+
+    /* User bubble */
+    .n8n-chat-message--user .n8n-chat-message__bubble {
+      background-color: white !important;
+      color: black !important;
+      border-radius: 24px;
+      font-size: 18px;
+      padding: 12px 16px;
+    }
+
+    /* Input box */
+    .n8n-chat-widget input {
+      background-color: white !important;
+      color: black !important;
+      font-size: 18px;
+      padding: 12px;
+      border: none !important;
+    }
+
+    .n8n-chat-widget input::placeholder {
+      color: black !important;
+      opacity: 1;
+    }
+
+    /* Send button */
+    .n8n-chat-widget button {
+      background-color: #ec058e !important;
+      color: white !important;
+      border: none !important;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-
-  <img id="custom-launcher" src="https://i.imgur.com/FMxJmoW.png" alt="Chat with Hunni" />
-
-  <div id="chat-box">
-    <div id="chat-header">● Chat with Hunni</div>
-    <div id="chat-messages"></div>
-    <div id="chat-input-area">
-      <input id="chat-input" placeholder="Type here..." />
-      <button id="send-button">Send</button>
-    </div>
+  <div class="custom-header">
+    <div class="dot"></div>
+    Chat with Hunni
   </div>
 
-  <script>
-    const launcher = document.getElementById("custom-launcher");
-    const chatBox = document.getElementById("chat-box");
-    const chatInput = document.getElementById("chat-input");
-    const chatMessages = document.getElementById("chat-messages");
-    const sendButton = document.getElementById("send-button");
+  <div id="n8n-chat"></div>
 
-    launcher.onclick = () => {
-      chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
-    };
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
 
-    function appendMessage(text, sender) {
-      const div = document.createElement("div");
-      div.className = "message " + sender;
-      div.textContent = text;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    async function sendMessage() {
-      const userMessage = chatInput.value.trim();
-      if (!userMessage) return;
-
-      appendMessage(userMessage, "user");
-      chatInput.value = "";
-
-      try {
-        const res = await fetch("https://rhiveconstruction.app.n8n.cloud/webhook/31dddc25-ad0e-4a4a-ba1d-a8b9dbd731b9", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userMessage,
-            chatInput: userMessage,
-            sessionId: "custom-" + Date.now(),
-            user: { name: "Guest" }
-          })
-        });
-        const data = await res.json();
-        appendMessage(data.reply || data.message || "Sorry, no response.", "bot");
-      } catch (err) {
-        appendMessage("Error connecting to Hunni.", "bot");
-      }
-    }
-
-    sendButton.onclick = sendMessage;
-    chatInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
+    createChat({
+      webhookUrl: 'https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat',
+      webhookConfig: {
+        method: 'POST',
+        headers: {}
+      },
+      target: '#n8n-chat',
+      mode: 'window',
+      chatInputKey: 'chatInput',
+      chatSessionKey: 'sessionId',
+      metadata: {},
+      showWelcomeScreen: false,
+      defaultLanguage: 'en',
+      initialMessages: [
+        'Hi there!',
+        'My name is Hunni. How can I assist you today?'
+      ],
+      i18n: {
+        en: {
+          title: '',
+          subtitle: '',
+          footer: '',
+          getStarted: 'New Conversation',
+          inputPlaceholder: 'Type Here...',
+        },
+      },
     });
   </script>
 </body>
