@@ -10,94 +10,61 @@
       --chat--color-primary: #ec058e;
       --chat--color-dark: #000000;
       --chat--color-white: #ffffff;
+      --chat--color-light: #f2f4f8;
       --chat--bubble--user: #ffffff;
       --chat--bubble--assistant: #000000;
       --chat--font-family: 'Arial', sans-serif;
-      --chat--color-light: #ec058e;
     }
 
-    body {
-      background-color: #ec058e;
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-    }
-
-    /* Custom header bar */
-    .custom-header {
-      background-color: black;
-      color: white;
-      padding: 10px 16px;
-      font-size: 20px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .custom-header .dot {
-      height: 12px;
-      width: 12px;
-      background-color: #00cc44;
-      border-radius: 50%;
-    }
-
-    /* Hide default n8n header */
+    /* Optional: Hide default header inside the widget */
     .n8n-chat-header__wrapper {
       display: none !important;
     }
 
-    /* Set widget background */
+    /* Widget background */
     .n8n-chat-widget {
       background-color: #ec058e !important;
+      border-radius: 16px !important;
     }
 
-    /* Message label styles */
+    /* Message text bubbles */
+    .n8n-chat-message--assistant .n8n-chat-message__bubble {
+      background-color: black !important;
+      color: white !important;
+      border-radius: 24px !important;
+      font-size: 16px;
+    }
+
+    .n8n-chat-message--user .n8n-chat-message__bubble {
+      background-color: white !important;
+      color: black !important;
+      border-radius: 24px !important;
+      font-size: 16px;
+    }
+
+    /* Message labels */
     .n8n-chat-message--assistant .n8n-chat-message__from {
       color: white !important;
-      font-size: 18px;
-      font-weight: 500;
-      text-align: left;
-      padding-left: 10px;
+      font-weight: 600;
+      padding-left: 12px;
     }
 
     .n8n-chat-message--user .n8n-chat-message__from {
       color: white !important;
-      font-size: 18px;
-      font-weight: 500;
+      font-weight: 600;
       text-align: right;
-      padding-right: 10px;
+      padding-right: 12px;
     }
 
-    /* Assistant bubble */
-    .n8n-chat-message--assistant .n8n-chat-message__bubble {
-      background-color: black !important;
-      color: white !important;
-      border-radius: 24px;
-      font-size: 18px;
-      padding: 12px 16px;
-    }
-
-    /* User bubble */
-    .n8n-chat-message--user .n8n-chat-message__bubble {
-      background-color: white !important;
-      color: black !important;
-      border-radius: 24px;
-      font-size: 18px;
-      padding: 12px 16px;
-    }
-
-    /* Input box */
+    /* Input field */
     .n8n-chat-widget input {
       background-color: white !important;
       color: black !important;
-      font-size: 18px;
-      padding: 12px;
       border: none !important;
     }
 
     .n8n-chat-widget input::placeholder {
       color: black !important;
-      opacity: 1;
     }
 
     /* Send button */
@@ -105,16 +72,15 @@
       background-color: #ec058e !important;
       color: white !important;
       border: none !important;
-      font-size: 18px;
+    }
+
+    /* Optional: hide "Powered by" footer */
+    .n8n-chat-footer__wrapper {
+      display: none !important;
     }
   </style>
 </head>
 <body>
-  <div class="custom-header">
-    <div class="dot"></div>
-    Chat with Hunni
-  </div>
-
   <div id="n8n-chat"></div>
 
   <script type="module">
@@ -127,7 +93,7 @@
         headers: {}
       },
       target: '#n8n-chat',
-      mode: 'window',
+      mode: 'window', // FLOATING BUBBLE MODE ✅
       chatInputKey: 'chatInput',
       chatSessionKey: 'sessionId',
       metadata: {},
@@ -143,7 +109,7 @@
           subtitle: '',
           footer: '',
           getStarted: 'New Conversation',
-          inputPlaceholder: 'Type Here...',
+          inputPlaceholder: 'Type here...',
         },
       },
     });
