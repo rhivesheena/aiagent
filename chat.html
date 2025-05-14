@@ -3,89 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RHIVE Chatbot</title>
+  <title>RHIVE Chatbot - Hunni</title>
   <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   <style>
     :root {
       --chat--color-primary: #ec058e;
-      --chat--color-dark: #000000;
+      --chat--color-primary-shade-50: #d2057e;
+      --chat--color-primary-shade-100: #b0056d;
+      --chat--color-secondary: #20b69e;
       --chat--color-white: #ffffff;
+      --chat--color-dark: #000000;
       --chat--color-light: #f2f4f8;
-      --chat--bubble--user: #ffffff;
-      --chat--bubble--assistant: #000000;
-      --chat--font-family: 'Arial', sans-serif;
+      --chat--window--background: #ec058e;
+
+      --chat--header--background: #000000;
+      --chat--header--color: #ffffff;
+      --chat--header-height: auto;
+      --chat--heading--font-size: 1.25rem;
+      --chat--subtitle--font-size: 1rem;
+      --chat--header--padding: 1rem;
+
+      --chat--message--bot--background: #000000;
+      --chat--message--bot--color: #ffffff;
+      --chat--message--user--background: #ffffff;
+      --chat--message--user--color: #000000;
+      --chat--message--font-size: 1.25rem;
+      --chat--message--border-radius: 1.5rem;
+      --chat--message--padding: 1rem;
+
+      --chat--textarea--background: #ffffff;
+      --chat--textarea--color: #000000;
+      --chat--textarea--placeholder--color: #000000;
+      --chat--textarea--height: 60px;
+
+      --chat--toggle--background: transparent;
+      --chat--toggle--color: #ffffff;
+
+      --chat--window--width: 400px;
+      --chat--window--height: 600px;
     }
 
-    /* Optional: Hide default header inside the widget */
-    .n8n-chat-header__wrapper {
-      display: none !important;
+    .chat-header::before {
+      content: "● ";
+      color: #00C853;
+      margin-right: 0.4rem;
     }
 
-    /* Widget background */
-    .n8n-chat-widget {
-      background-color: #ec058e !important;
-      border-radius: 16px !important;
+    .chat-message {
+      margin: 1.25rem 1rem !important;
     }
 
-    /* Message text bubbles */
-    .n8n-chat-message--assistant .n8n-chat-message__bubble {
-      background-color: black !important;
-      color: white !important;
-      border-radius: 24px !important;
-      font-size: 16px;
+    [data-message]:first-child::before {
+      content: none !important;
     }
 
-    .n8n-chat-message--user .n8n-chat-message__bubble {
-      background-color: white !important;
-      color: black !important;
-      border-radius: 24px !important;
-      font-size: 16px;
+    .chat-message[data-author="bot"]::before {
+      content: "Hunni";
+      color: #ffffff;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.25rem;
     }
 
-    /* Message labels */
-    .n8n-chat-message--assistant .n8n-chat-message__from {
-      color: white !important;
-      font-weight: 600;
-      padding-left: 12px;
-    }
-
-    .n8n-chat-message--user .n8n-chat-message__from {
-      color: white !important;
-      font-weight: 600;
+    .chat-message[data-author="user"]::before {
+      content: "You";
+      color: #ffffff;
+      font-weight: bold;
+      display: block;
       text-align: right;
-      padding-right: 12px;
-    }
-
-    /* Input field */
-    .n8n-chat-widget input {
-      background-color: white !important;
-      color: black !important;
-      border: none !important;
-    }
-
-    .n8n-chat-widget input::placeholder {
-      color: black !important;
-    }
-
-    /* Send button */
-    .n8n-chat-widget button {
-      background-color: #ec058e !important;
-      color: white !important;
-      border: none !important;
-    }
-
-    /* Optional: hide "Powered by" footer */
-    .n8n-chat-footer__wrapper {
-      display: none !important;
+      margin-bottom: 0.25rem;
     }
   </style>
 </head>
 <body>
   <div id="n8n-chat"></div>
 
-  <script type="module">
-    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
+  <script src="https://cdn.jsdelivr.net/npm/@n8n/chat"></script>
+  <script>
     createChat({
       webhookUrl: 'https://rhiveconstruction.app.n8n.cloud/webhook/01dc2536-f3c5-4c7d-951e-e70ec1ec6380/chat',
       webhookConfig: {
@@ -93,7 +87,8 @@
         headers: {}
       },
       target: '#n8n-chat',
-      mode: 'window', // FLOATING BUBBLE MODE ✅
+      mode: 'toggle', // floating icon mode
+      toggleLabel: '<img src="https://i.imgur.com/FMxJmoW.png" style="width: 64px; height: 64px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="Chat" />',
       chatInputKey: 'chatInput',
       chatSessionKey: 'sessionId',
       metadata: {},
@@ -105,11 +100,11 @@
       ],
       i18n: {
         en: {
-          title: '',
+          title: 'Chat with Hunni',
           subtitle: '',
           footer: '',
           getStarted: 'New Conversation',
-          inputPlaceholder: 'Type here...',
+          inputPlaceholder: 'Type Here...',
         },
       },
     });
